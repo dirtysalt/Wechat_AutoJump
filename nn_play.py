@@ -156,13 +156,16 @@ class WechatAutoJump(object):
 
     def jump(self, player_pos, target_pos):
         print('player_pos = {}, target_pos = {}'.format(player_pos, target_pos))
+        offset = random.gauss(5, 2)
+        target_pos[0] += offset
+        target_pos[1] += offset
         distance = np.linalg.norm(player_pos - target_pos)
         press_time = distance * self.sensitivity
         press_time = int(press_time)
         press_h, press_w = int(0.82*self.resolution[0]), self.resolution[1]//2
-        offset = random.gauss(10, 20)
+        offset = random.gauss(20, 40)
         press_h += offset
-        offset = random.gauss(10, 20)
+        offset = random.gauss(20, 40)
         press_w += offset
         print('press h,w = (%s, %s), time = %s' % (press_h, press_w, press_time))
         if self.phone == 'Android':
@@ -195,7 +198,7 @@ class WechatAutoJump(object):
             self.debugging()
         self.jump(self.player_pos, self.target_pos)
         self.step += 1
-        x = random.gauss(1.8, 0.3)
+        x = random.gauss(2.0, 0.3)
         time.sleep(x)
 
     def run(self):
