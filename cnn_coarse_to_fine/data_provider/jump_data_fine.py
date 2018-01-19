@@ -1,10 +1,12 @@
-import numpy as np
 import os
+
 import cv2
+import numpy as np
+
 
 class JumpData:
     def __init__(self):
-        self.data_dir = '/home/anjie/projects/we_jump/data'
+        self.data_dir = os.path.dirname(__file__) + '../data/'
         self.name_list = []
         self.get_name_list()
         self.val_name_list = self.name_list[:200]
@@ -36,7 +38,8 @@ class JumpData:
         for idx, name in enumerate(batch_name):
             posi = name.index('_res')
             img_name = name[:posi] + '.png'
-            x, y = name[name.index('_h_') + 3: name.index('_h_') + 6], name[name.index('_w_') + 3: name.index('_w_') + 6]
+            x, y = name[name.index('_h_') + 3: name.index('_h_') + 6], name[
+                                                                       name.index('_w_') + 3: name.index('_w_') + 6]
             x, y = int(x), int(y)
             img = cv2.imread(img_name)
             # img = img[320: -320, :, :]

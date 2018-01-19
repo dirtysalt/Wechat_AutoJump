@@ -20,9 +20,9 @@ def multi_scale_search(pivot, screen, range=0.3, num=10):
         if resized.shape[0] < h or resized.shape[1] < w:
             break
         res = cv2.matchTemplate(resized, pivot, cv2.TM_CCOEFF_NORMED)
-
         loc = np.where(res >= res.max())
-        pos_h, pos_w = list(zip(*loc))[0]
+        pos_h, pos_w = loc[0][0], loc[1][0]
+        # pos_h, pos_w = list(zip(*loc))[0]
 
         if found is None or res.max() > found[-1]:
             found = (pos_h, pos_w, r, res.max())
@@ -58,6 +58,7 @@ class WechatAutoJump(object):
         self.jump_file = [cv2.imread(name, 0) for name in circle_file + table_file]
 
     def get_current_state(self):
+        """截屏并且裁剪到(w, h) = (720, 1280)"""
         if self.phone == 'Android':
             os.system('adb shell screencap -p /sdcard/1.png')
             os.system('adb pull /sdcard/1.png state.png')
@@ -83,6 +84,7 @@ class WechatAutoJump(object):
         return state
 
     def get_player_position(self, state):
+        # 中心集中在底部
         state = cv2.cvtColor(state, cv2.COLOR_BGR2GRAY)
         pos = multi_scale_search(self.player, state, 0.3, 10)
         h, w = int((pos[0] + 13 * pos[2])/14.), (pos[1] + pos[3])//2
@@ -90,6 +92,7 @@ class WechatAutoJump(object):
 
     def get_target_position(self, state, player_pos):
         state = cv2.cvtColor(state, cv2.COLOR_BGR2GRAY)
+        # 计算出target pos中点大致位置，然后在附近进行搜索。
         sym_center = [1280, 720] - player_pos
         sym_tl = np.maximum([0,0], sym_center + np.array([-self.bb_size[0]//2, -self.bb_size[1]//2]))
         sym_br = np.array([min(sym_center[0] + self.bb_size[0]//2, player_pos[0]), min(sym_center[1] + self.bb_size[1]//2, 720)])
@@ -108,6 +111,7 @@ class WechatAutoJump(object):
         m2 = (state_cut[:, :, 1] == 245)
         m3 = (state_cut[:, :, 2] == 245)
         m = np.uint8(np.float32(m1 * m2 * m3) * 255)
+        # 寻找联通子图. b1是联通的编号，b2是联通子图编号矩阵
         b1, b2 = cv2.connectedComponents(m)
         for i in range(1, np.max(b2) + 1):
             x, y = np.where(b2 == i)
