@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/anjie/projects/we_jump/')
+sys.path.append('../../')
 import numpy as np
 import os
 import tensorflow as tf
@@ -36,7 +36,7 @@ def inference(path):
 
     val_img = get_a_img(path)
     feed_dict = {
-        img: val_img,
+        img: val_img[:, 320:-320, :, :],
         is_training: False,
         keep_prob: 1.0,
     }
