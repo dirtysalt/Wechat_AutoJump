@@ -113,5 +113,5 @@ train_log*/
 *.zip
 __pycache__
 *DS_Store
-
-
+*.png
+logs/
