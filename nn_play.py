@@ -161,7 +161,7 @@ class WechatAutoJump(object):
         target_pos[1] += offset
         distance = np.linalg.norm(player_pos - target_pos)
         press_time = distance * self.sensitivity
-        press_time = int(press_time)
+        press_time = int(np.rint(press_time))
         press_h, press_w = int(0.82*self.resolution[0]), self.resolution[1]//2
         offset = random.gauss(20, 40)
         press_h += offset
